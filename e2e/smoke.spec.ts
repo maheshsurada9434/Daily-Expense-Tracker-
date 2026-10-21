@@ -75,13 +75,17 @@ test('signed-out visitors see the sign-in form and validation errors', async ({ 
 })
 
 test('add a transaction and see it listed', async ({ page }) => {
+  const logs: string[] = []
+  page.on('console', (m) => logs.push(m.text()))
+  page.on('framenavigated', () => logs.push('NAV ' + page.url()))
+  test.info().annotations.push({ type: 'x', description: '' })
   await signedIn(page)
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
   await page.getByRole('button', { name: /add transaction/i }).first().click()
   await page.getByLabel('Amount').fill('1250.50')
   await expect(page.getByLabel('Amount'), 'right after fill').toHaveValue('1250.50', { timeout: 100 })
   await page.waitForTimeout(800)
-  await expect(page.getByLabel('Amount'), 'after 800ms').toHaveValue('1250.50', { timeout: 100 })
+  await expect(page.getByLabel('Amount'), 'after 800ms LOGS: ' + logs.join(' | ')).toHaveValue('1250.50', { timeout: 100 })
   await page.getByLabel('Notes').fill('Team lunch')
   await page.getByRole('button', { name: 'Add transaction' }).last().click()
   await expect(page.getByText('Transaction added')).toBeVisible()
