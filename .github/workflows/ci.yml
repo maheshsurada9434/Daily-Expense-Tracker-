@@ -28,19 +28,19 @@ jobs:
         with:
           node-version: 20
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: scripts/ci-step.sh install npm install --no-audit --no-fund
       - name: Type check
-        run: npm run typecheck
+        run: scripts/ci-step.sh typecheck npm run typecheck
       - name: Lint
-        run: npm run lint
+        run: scripts/ci-step.sh lint npm run lint
       - name: Unit tests
-        run: npm test
+        run: scripts/ci-step.sh unit-tests npm test
       - name: Build
-        run: npm run build
+        run: scripts/ci-step.sh build npm run build
       - name: End-to-end tests (mocked backend)
         run: |
           npx playwright install --with-deps chromium
-          npm run e2e
+          scripts/ci-step.sh e2e npm run e2e
       - name: Upload build
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
