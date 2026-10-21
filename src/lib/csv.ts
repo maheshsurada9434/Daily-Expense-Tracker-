@@ -10,7 +10,7 @@ export const MAX_IMPORT_BYTES = 1_000_000
 export function parseCsv(text: string): string[][] {
   const rows: string[][] = []
   let row: string[] = [], cell = '', q = false
-  const src = text.replace(/^﻿/, '')
+  const src = text.replace(/^\uFEFF/, '')
   for (let i = 0; i < src.length; i++) {
     const c = src[i]
     if (q) {
