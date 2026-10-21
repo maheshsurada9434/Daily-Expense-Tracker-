@@ -11,7 +11,7 @@ import { budgetProgress, monthlyTrend, periodTotals, spendingByCategory, totalBa
 import { formatPct } from '../lib/money'
 
 type Tone = 'income' | 'expense'
-const TILE = { income: 'bg-income/15 text-income', expense: 'bg-expense/15 text-expense', none: 'bg-primary/12 text-primary' }
+const TILE = { income: 'bg-gradient-to-br from-emerald-400/30 to-teal-400/20 text-income', expense: 'bg-gradient-to-br from-rose-400/30 to-orange-400/20 text-expense', none: 'bg-gradient-to-br from-primary/25 to-violet/20 text-primary' }
 
 function Stat({ label, amount, format, value, icon, tone, sub }: { label: string; amount?: number; format?: (n: number) => string; value?: string; icon: React.ReactNode; tone?: Tone; sub?: string }) {
   const shown = useCountUp(amount ?? 0)
@@ -29,7 +29,7 @@ function Hero({ amount, format, sub }: { amount: number; format: (n: number) => 
   return (
     <div className="hero lg:col-span-2">
       <div className="relative flex items-center gap-2 text-sm font-semibold text-white/85"><Scale className="h-4 w-4" aria-hidden="true" /> Total balance</div>
-      <p className="tabular relative mt-3 truncate text-4xl font-extrabold tracking-tight sm:text-5xl" aria-label={format(amount)}>{format(shown)}</p>
+      <p className="tabular relative mt-3 truncate text-4xl drop-shadow-sm font-extrabold tracking-tight sm:text-5xl" aria-label={format(amount)}>{format(shown)}</p>
       <p className="relative mt-2 text-sm text-white/80">{sub}</p>
     </div>
   )

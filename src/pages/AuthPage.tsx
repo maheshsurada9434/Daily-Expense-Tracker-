@@ -55,8 +55,8 @@ export default function AuthPage() {
   return (
     <main className="mx-auto grid min-h-screen max-w-5xl items-center gap-10 p-5 md:grid-cols-2">
       <section className="hidden md:block">
-        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4f46e5] to-[#9333ea] text-white shadow-xl shadow-primary/30"><LineChart className="h-7 w-7" aria-hidden="true" /></div>
-        <h1 className="text-5xl font-extrabold leading-[1.1] tracking-tight">Know where every <span className="bg-gradient-to-r from-primary to-violet bg-clip-text text-transparent">rupee</span> goes.</h1>
+        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4f46e5] via-[#7c3aed] to-[#c026d3] text-white shadow-xl shadow-primary/30 ring-1 ring-white/40 animate-[float_7s_ease-in-out_infinite]"><LineChart className="h-7 w-7" aria-hidden="true" /></div>
+        <h1 className="text-5xl font-extrabold leading-[1.1] tracking-tight">Know where every <span className="gradient-text">rupee</span> goes.</h1>
         <p className="mt-3 max-w-md text-sub">Track income and spending, plan budgets, save toward goals and never miss a bill. Your records are private to your account.</p>
         <p className="mt-6 flex items-center gap-2 text-sm text-sub"><ShieldCheck className="h-4 w-4 text-income" aria-hidden="true" /> Row-level security: only you can read your data. No bank logins are ever asked for.</p>
       </section>

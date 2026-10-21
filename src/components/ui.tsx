@@ -42,7 +42,7 @@ export function Skeleton({ className }: { className?: string }) {
 export function EmptyState({ icon, title, body, action }: { icon: ReactNode; title: string; body?: string; action?: ReactNode }) {
   return (
     <div className="flex flex-col items-center gap-2 px-6 py-12 text-center">
-      <div className="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-sub">{icon}</div>
+      <div className="glass mb-1 flex h-14 w-14 animate-[float_6s_ease-in-out_infinite] items-center justify-center rounded-2xl text-primary">{icon}</div>
       <p className="font-semibold">{title}</p>
       {body && <p className="max-w-sm text-sm text-sub">{body}</p>}
       {action && <div className="mt-3">{action}</div>}
@@ -52,7 +52,7 @@ export function EmptyState({ icon, title, body, action }: { icon: ReactNode; tit
 
 export function ErrorBanner({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
-    <div role="alert" className="flex items-start gap-3 rounded-lg border border-expense/40 bg-expense/10 p-3 text-sm">
+    <div role="alert" className="flex items-start gap-3 rounded-2xl border border-expense/40 bg-expense/10 p-3 text-sm backdrop-blur-md">
       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-expense" aria-hidden="true" />
       <p className="flex-1">{message}</p>
       {onRetry && <button className="font-semibold underline" onClick={onRetry}>Retry</button>}
@@ -64,8 +64,8 @@ export function ProgressBar({ pct, tone = 'primary', label }: { pct: number; ton
   const color = { primary: 'bg-gradient-to-r from-primary to-violet', warn: 'bg-warn', expense: 'bg-expense', income: 'bg-income' }[tone]
   const v = Math.max(0, Math.min(100, pct))
   return (
-    <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v)} className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
-      <div className={cx('h-full rounded-full transition-[width] duration-500', color)} style={{ width: `${v}%` }} />
+    <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v)} className="h-2.5 w-full overflow-hidden rounded-full bg-fg/10">
+      <div className={cx('relative h-full overflow-hidden rounded-full transition-[width] duration-700 ease-out', color)} style={{ width: `${v}%` }}><span className="bar-shine absolute inset-0" aria-hidden="true" /></div>
     </div>
   )
 }
@@ -102,7 +102,7 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
       aria-labelledby="modal-title"
       onClose={onClose}
       onClick={(e) => { if (e.target === ref.current) onClose() }}
-      className={cx('m-auto w-[calc(100%-1.5rem)] rounded-2xl border border-border bg-card p-0 shadow-2xl backdrop:bg-black/50', wide ? 'max-w-3xl' : 'max-w-lg')}
+      className={cx('m-auto w-[calc(100%-1.5rem)] glass-strong rounded-[1.75rem] p-0', wide ? 'max-w-3xl' : 'max-w-lg')}
     >
       {open && (
         <div className="fade-up max-h-[88vh] overflow-y-auto p-5">
@@ -134,7 +134,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="pointer-events-none fixed inset-x-0 bottom-20 z-[60] flex flex-col items-center gap-2 px-3 lg:bottom-6" aria-live="polite">
         {items.map((t) => (
-          <div key={t.id} role={t.kind === 'error' ? 'alert' : 'status'} className="fade-up pointer-events-auto flex max-w-md items-start gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm shadow-lg">
+          <div key={t.id} role={t.kind === 'error' ? 'alert' : 'status'} className="fade-up pointer-events-auto flex max-w-md items-start gap-2 glass-strong rounded-2xl px-4 py-3 text-sm">
             {t.kind === 'ok' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-income" aria-hidden="true" /> : t.kind === 'error' ? <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-expense" aria-hidden="true" /> : <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />}
             <span>{t.text}</span>
           </div>

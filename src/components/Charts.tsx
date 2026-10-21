@@ -8,6 +8,7 @@ export const monthLong = (m: string) => `${MONTHS[Number(m.slice(5, 7)) - 1]} ${
 
 // Chart colours come from the CSS variables so they follow light/dark. Colour is never the only cue:
 // the series are also named in the legend, tooltips and the data table below each chart.
+const TIP = { background: 'rgb(var(--glass-strong))', backdropFilter: 'blur(16px)', border: '1px solid rgb(var(--glass-edge))', borderRadius: 16, boxShadow: '0 12px 30px -12px rgb(var(--glass-shadow))' }
 const C = { income: 'rgb(var(--income))', expense: 'rgb(var(--expense))', net: 'rgb(var(--primary))', grid: 'rgb(var(--border))', axis: 'rgb(var(--sub))' }
 
 const compact = (minor: number) => {
@@ -27,7 +28,7 @@ export function TrendChart({ rows }: { rows: MonthRow[] }) {
             <CartesianGrid stroke={C.grid} vertical={false} />
             <XAxis dataKey="name" tick={{ fill: C.axis, fontSize: 12 }} tickLine={false} axisLine={false} />
             <YAxis tick={{ fill: C.axis, fontSize: 12 }} tickLine={false} axisLine={false} width={52} tickFormatter={compact} />
-            <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ background: 'rgb(var(--card))', border: '1px solid rgb(var(--border))', borderRadius: 8 }} />
+            <Tooltip formatter={(v: number) => fmt(v)} contentStyle={TIP} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
             <Bar dataKey="Income" fill={C.income} radius={[4, 4, 0, 0]} maxBarSize={28} />
             <Bar dataKey="Expenses" fill={C.expense} radius={[4, 4, 0, 0]} maxBarSize={28} />
@@ -57,7 +58,7 @@ export function CategoryDonut({ slices }: { slices: Slice[] }) {
             <Pie data={slices} dataKey="value" nameKey="name" innerRadius={52} outerRadius={84} paddingAngle={2} stroke="none">
               {slices.map((s) => <Cell key={s.name} fill={s.color} />)}
             </Pie>
-            <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ background: 'rgb(var(--card))', border: '1px solid rgb(var(--border))', borderRadius: 8 }} />
+            <Tooltip formatter={(v: number) => fmt(v)} contentStyle={TIP} />
           </PieChart>
         </ResponsiveContainer>
       </div>
@@ -84,7 +85,7 @@ export function CashFlowLine({ rows }: { rows: { name: string; balance: number }
           <CartesianGrid stroke={C.grid} vertical={false} />
           <XAxis dataKey="name" tick={{ fill: C.axis, fontSize: 12 }} tickLine={false} axisLine={false} />
           <YAxis tick={{ fill: C.axis, fontSize: 12 }} tickLine={false} axisLine={false} width={52} tickFormatter={compact} />
-          <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ background: 'rgb(var(--card))', border: '1px solid rgb(var(--border))', borderRadius: 8 }} />
+          <Tooltip formatter={(v: number) => fmt(v)} contentStyle={TIP} />
           <Line dataKey="balance" name="Cumulative net" stroke={C.net} strokeWidth={2} dot={{ r: 3 }} />
         </ComposedChart>
       </ResponsiveContainer>
