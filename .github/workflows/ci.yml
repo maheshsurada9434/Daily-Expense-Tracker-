@@ -44,7 +44,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           npx playwright install --with-deps chromium
-          scripts/ci-step.sh e2e bash -c 'npm run e2e || { cat test-results/*/error-context.md; exit 1; }'
+          scripts/ci-step.sh e2e scripts/e2e-ci.sh
       - name: Upload build
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
