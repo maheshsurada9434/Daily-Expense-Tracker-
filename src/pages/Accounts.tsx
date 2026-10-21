@@ -82,7 +82,7 @@ function AccountDialog({ target, onClose }: { target: Account | 'new' | null; on
   const { busy, run } = useAction()
   const editing = target && target !== 'new' ? target : null
   const { register, handleSubmit, reset, formState: { errors } } = useForm<z.infer<typeof accountSchema>>({ resolver: zodResolver(accountSchema) })
-  useEffect(() => { if (target) reset(editing ? { name: editing.name, kind: editing.kind, opening: minorToDecimal(editing.openingBalance) } : { name: '', kind: 'bank', opening: '' }) }, [target, editing, reset])
+  useEffect(() => { if (target) reset(editing ? { name: editing.name, kind: editing.kind, opening: minorToDecimal(editing.openingBalance) } : { name: '', kind: 'bank', opening: '' }, { keepFieldsRef: true }) }, [target, editing, reset])
   const submit = handleSubmit(async (v) => { if (await run(async () => { await api.saveAccount(v, editing?.id); await reload('accounts') }, 'Account saved')) onClose() })
   return (
     <Modal open={!!target} onClose={onClose} title={editing ? 'Edit account' : 'Add account'}>
@@ -146,7 +146,7 @@ function CategoryDialog({ target, onClose }: { target: Category | 'new' | null; 
   const { busy, run } = useAction()
   const editing = target && target !== 'new' ? target : null
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<z.infer<typeof categorySchema>>({ resolver: zodResolver(categorySchema) })
-  useEffect(() => { if (target) reset(editing ? { name: editing.name, kind: editing.kind, color: editing.color } : { name: '', kind: 'expense', color: PALETTE[0] }) }, [target, editing, reset])
+  useEffect(() => { if (target) reset(editing ? { name: editing.name, kind: editing.kind, color: editing.color } : { name: '', kind: 'expense', color: PALETTE[0] }, { keepFieldsRef: true }) }, [target, editing, reset])
   const color = watch('color')
   const submit = handleSubmit(async (v) => { if (await run(async () => { await api.saveCategory(v, editing?.id); await reload('categories') }, 'Category saved')) onClose() })
   return (
@@ -205,7 +205,7 @@ function TransferDialog({ target, onClose }: { target: TransferRec | 'new' | nul
   const editing = target && target !== 'new' ? target : null
   const list = accounts.filter((a) => !a.archived || a.id === editing?.fromAccountId || a.id === editing?.toAccountId)
   const { register, handleSubmit, reset, formState: { errors } } = useForm<z.infer<typeof transferSchema>>({ resolver: zodResolver(transferSchema) })
-  useEffect(() => { if (target) reset(editing ? { fromAccountId: editing.fromAccountId, toAccountId: editing.toAccountId, amount: minorToDecimal(editing.amount), date: editing.date, note: editing.note } : { fromAccountId: list[0]?.id ?? '', toAccountId: list[1]?.id ?? '', amount: '', date: today, note: '' }) }, [target]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (target) reset(editing ? { fromAccountId: editing.fromAccountId, toAccountId: editing.toAccountId, amount: minorToDecimal(editing.amount), date: editing.date, note: editing.note } : { fromAccountId: list[0]?.id ?? '', toAccountId: list[1]?.id ?? '', amount: '', date: today, note: '' }, { keepFieldsRef: true }) }, [target]) // eslint-disable-line react-hooks/exhaustive-deps
   const submit = handleSubmit(async (v) => { if (await run(async () => { await api.saveTransfer(v, editing?.id); await reload('transfers') }, 'Transfer saved')) onClose() })
   return (
     <Modal open={!!target} onClose={onClose} title={editing ? 'Edit transfer' : 'New transfer'}>

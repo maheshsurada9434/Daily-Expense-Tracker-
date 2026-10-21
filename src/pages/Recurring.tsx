@@ -90,7 +90,7 @@ function RuleDialog({ target, onClose }: { target: RuleRec | 'new' | null; onClo
     if (!target) return
     reset(editing
       ? { type: editing.type, amount: minorToDecimal(editing.amount), accountId: editing.accountId, categoryId: editing.categoryId ?? '', description: editing.description, frequency: editing.frequency, startDate: editing.startDate, endDate: editing.endDate ?? '', isBill: editing.isBill, remindDays: String(editing.remindDays) }
-      : { type: 'expense', amount: '', accountId: accounts.find((a) => !a.archived)?.id ?? '', categoryId: '', description: '', frequency: 'monthly', startDate: today, endDate: '', isBill: false, remindDays: '3' })
+      : { type: 'expense', amount: '', accountId: accounts.find((a) => !a.archived)?.id ?? '', categoryId: '', description: '', frequency: 'monthly', startDate: today, endDate: '', isBill: false, remindDays: '3' }, { keepFieldsRef: true })
   }, [target]) // eslint-disable-line react-hooks/exhaustive-deps
   const type = watch('type')
   const isBill = watch('isBill')

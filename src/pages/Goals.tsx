@@ -70,7 +70,7 @@ function GoalDialog({ target, onClose }: { target: GoalRec | 'new' | null; onClo
   const { busy, run } = useAction()
   const editing = target && target !== 'new' ? target : null
   const { register, handleSubmit, reset, formState: { errors } } = useForm<z.infer<typeof goalSchema>>({ resolver: zodResolver(goalSchema) })
-  useEffect(() => { if (target) reset(editing ? { name: editing.name, targetAmount: minorToDecimal(editing.targetAmount), targetDate: editing.targetDate ?? '' } : { name: '', targetAmount: '', targetDate: '' }) }, [target, editing, reset])
+  useEffect(() => { if (target) reset(editing ? { name: editing.name, targetAmount: minorToDecimal(editing.targetAmount), targetDate: editing.targetDate ?? '' } : { name: '', targetAmount: '', targetDate: '' }, { keepFieldsRef: true }) }, [target, editing, reset])
   const submit = handleSubmit(async (v) => { if (await run(async () => { await api.saveGoal(v, editing?.id); await reload('goals') }, 'Goal saved')) onClose() })
   return (
     <Modal open={!!target} onClose={onClose} title={editing ? 'Edit goal' : 'New goal'}>
@@ -88,7 +88,7 @@ function ContributionDialog({ goal, onClose }: { goal: GoalRec | null; onClose: 
   const { reload, today } = useData()
   const { busy, run } = useAction()
   const { register, handleSubmit, reset, formState: { errors } } = useForm<z.infer<typeof contributionSchema>>({ resolver: zodResolver(contributionSchema) })
-  useEffect(() => { if (goal) reset({ amount: '', date: today, note: '' }) }, [goal, today, reset])
+  useEffect(() => { if (goal) reset({ amount: '', date: today, note: '' }, { keepFieldsRef: true }) }, [goal, today, reset])
   const submit = handleSubmit(async (v) => { if (goal && await run(async () => { await api.addContribution(goal.id, v); await reload('contribs') }, 'Contribution added')) onClose() })
   return (
     <Modal open={!!goal} onClose={onClose} title={`Add money to ${goal?.name ?? ''}`}>

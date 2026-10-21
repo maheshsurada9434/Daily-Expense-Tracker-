@@ -25,8 +25,8 @@ export default function TransactionDialog({ open, onClose, editing }: { open: bo
   [editing, open])
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<Values>({ resolver: zodResolver(transactionSchema), defaultValues: defaults })
-  useEffect(() => { console.log('DBG reset', open, performance.now()|0); if (open) reset(defaults) }, [open, defaults, reset])
-  useEffect(() => { console.log('DBG mount TD'); return () => console.log('DBG unmount TD') }, [])
+  // keepFieldsRef writes the values into the inputs now; without it, typing before the next render is dropped.
+  useEffect(() => { if (open) reset(defaults, { keepFieldsRef: true }) }, [open, defaults, reset])
 
   const type = watch('type')
   const cats = categories.filter((c) => (type === 'income' ? c.kind === 'income' : c.kind === 'expense') && (!c.archived || c.id === editing?.categoryId))

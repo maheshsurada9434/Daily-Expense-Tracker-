@@ -91,7 +91,7 @@ function BudgetDialog({ target, month, free, onClose }: { target: BudgetRec | 'n
   const { busy, run } = useAction()
   const editing = target && target !== 'new' ? target : null
   const { register, handleSubmit, reset, formState: { errors } } = useForm<z.infer<typeof budgetSchema>>({ resolver: zodResolver(budgetSchema) })
-  useEffect(() => { if (target) reset(editing ? { categoryId: editing.categoryId, amount: minorToDecimal(editing.amount), warnPct: String(editing.warnPct) } : { categoryId: free[0]?.id ?? '', amount: '', warnPct: '80' }) }, [target]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (target) reset(editing ? { categoryId: editing.categoryId, amount: minorToDecimal(editing.amount), warnPct: String(editing.warnPct) } : { categoryId: free[0]?.id ?? '', amount: '', warnPct: '80' }, { keepFieldsRef: true }) }, [target]) // eslint-disable-line react-hooks/exhaustive-deps
   const submit = handleSubmit(async (v) => { if (await run(async () => { await api.saveBudget(v, month, editing?.id); await reload('budgets') }, 'Budget saved')) onClose() })
   return (
     <Modal open={!!target} onClose={onClose} title={editing ? 'Edit budget' : `New budget · ${monthLong(month)}`}>

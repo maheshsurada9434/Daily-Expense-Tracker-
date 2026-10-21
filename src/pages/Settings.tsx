@@ -23,7 +23,7 @@ export default function Settings() {
   const toast = useToast()
   const confirm = useConfirm()
   const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<z.infer<typeof settingsSchema>>({ resolver: zodResolver(settingsSchema) })
-  useEffect(() => { reset({ displayName: profile.displayName, currency: prefs.currency, timezone: prefs.timezone, theme: prefs.theme, fyStartMonth: String(prefs.fyStartMonth) }) }, [prefs, profile, reset])
+  useEffect(() => { reset({ displayName: profile.displayName, currency: prefs.currency, timezone: prefs.timezone, theme: prefs.theme, fyStartMonth: String(prefs.fyStartMonth) }, { keepFieldsRef: true }) }, [prefs, profile, reset])
   const tzList = zones.includes(prefs.timezone) ? zones : [prefs.timezone, ...zones]
 
   const save = handleSubmit((v) => run(async () => { await api.saveSettings(v); await reload('prefs') }, 'Settings saved'))
