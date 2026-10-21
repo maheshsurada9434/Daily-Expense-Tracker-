@@ -32,12 +32,16 @@ jobs:
       - name: Type check
         run: scripts/ci-step.sh typecheck npm run typecheck
       - name: Lint
+        if: ${{ !cancelled() }}
         run: scripts/ci-step.sh lint npm run lint
       - name: Unit tests
+        if: ${{ !cancelled() }}
         run: scripts/ci-step.sh unit-tests npm test
       - name: Build
+        if: ${{ !cancelled() }}
         run: scripts/ci-step.sh build npm run build
       - name: End-to-end tests (mocked backend)
+        if: ${{ !cancelled() }}
         run: |
           npx playwright install --with-deps chromium
           scripts/ci-step.sh e2e npm run e2e

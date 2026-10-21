@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LineChart, ShieldCheck } from 'lucide-react'
-import type { z } from 'zod'
+import type { ZodTypeAny } from 'zod'
 import { supabase, friendlyError } from '../lib/supabase'
 import { signInSchema, signUpSchema } from '../lib/schemas'
 import { Field } from '../components/ui'
@@ -20,7 +20,7 @@ export default function AuthPage() {
   const [lockedUntil, setLockedUntil] = useState(0)
 
   const schema = mode === 'signup' ? signUpSchema : mode === 'reset' ? signUpSchema.pick({ email: true }) : signInSchema
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<Values>({ resolver: zodResolver(schema as z.ZodType<Values>) })
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<Values>({ resolver: zodResolver(schema as ZodTypeAny) as unknown as Resolver<Values> })
 
   const switchMode = (m: Mode) => { setMode(m); setMsg(null); reset() }
 
