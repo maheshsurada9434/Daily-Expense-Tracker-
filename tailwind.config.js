@@ -7,11 +7,11 @@ export default {
     extend: {
       colors: {
         bg: v('bg'), card: v('card'), muted: v('muted'), border: v('border'), fg: v('fg'), sub: v('sub'),
-        primary: v('primary'), 'on-primary': v('on-primary'), accent: v('accent'),
+        primary: v('primary'), 'on-primary': v('on-primary'), accent: v('accent'), violet: v('violet'),
         income: v('income'), expense: v('expense'), warn: v('warn'),
       },
-      fontFamily: { sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'] },
-      boxShadow: { card: '0 1px 2px rgb(15 23 42 / 0.06), 0 1px 1px rgb(15 23 42 / 0.04)' },
+      fontFamily: { sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'] },
+      boxShadow: { card: '0 1px 2px rgb(30 27 75 / 0.05), 0 8px 24px -12px rgb(30 27 75 / 0.12)' },
     },
   },
   plugins: [],

@@ -55,18 +55,18 @@ export default function AuthPage() {
   return (
     <main className="mx-auto grid min-h-screen max-w-5xl items-center gap-10 p-5 md:grid-cols-2">
       <section className="hidden md:block">
-        <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-on-primary"><LineChart className="h-6 w-6" aria-hidden="true" /></div>
-        <h1 className="text-4xl font-semibold tracking-tight">Know where every rupee goes.</h1>
+        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4f46e5] to-[#9333ea] text-white shadow-xl shadow-primary/30"><LineChart className="h-7 w-7" aria-hidden="true" /></div>
+        <h1 className="text-5xl font-extrabold leading-[1.1] tracking-tight">Know where every <span className="bg-gradient-to-r from-primary to-violet bg-clip-text text-transparent">rupee</span> goes.</h1>
         <p className="mt-3 max-w-md text-sub">Track income and spending, plan budgets, save toward goals and never miss a bill. Your records are private to your account.</p>
         <p className="mt-6 flex items-center gap-2 text-sm text-sub"><ShieldCheck className="h-4 w-4 text-income" aria-hidden="true" /> Row-level security: only you can read your data. No bank logins are ever asked for.</p>
       </section>
 
-      <section className="card fade-up p-6">
+      <section className="card fade-up p-6 shadow-2xl shadow-primary/10 sm:p-8">
         <div className="mb-5 flex items-center gap-3 md:hidden">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-on-primary"><LineChart className="h-5 w-5" aria-hidden="true" /></div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#9333ea] text-white"><LineChart className="h-5 w-5" aria-hidden="true" /></div>
           <span className="font-semibold">Daily Expense Tracker</span>
         </div>
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <h2 className="text-2xl font-extrabold tracking-tight">{title}</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4" noValidate>
           <Field label="Email" error={errors.email?.message}>
             <input className="input" type="email" autoComplete="email" inputMode="email" aria-invalid={!!errors.email} {...register('email')} />

@@ -4,11 +4,30 @@ import { AlertTriangle, CheckCircle2, Info, X } from 'lucide-react'
 export const cx = (...a: (string | false | null | undefined)[]) => a.filter(Boolean).join(' ')
 
 /* ───────── layout bits ───────── */
+/** Eases a number from its previous value to `target`; shows the final value at once if motion is reduced. */
+export function useCountUp(target: number, ms = 700) {
+  const [v, setV] = useState(target)
+  const from = useRef(target)
+  useEffect(() => {
+    if (from.current === target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { from.current = target; setV(target); return }
+    const start = from.current, t0 = performance.now()
+    let raf = 0
+    const tick = (now: number) => {
+      const k = Math.min(1, (now - t0) / ms)
+      setV(Math.round(start + (target - start) * (1 - Math.pow(1 - k, 3))))
+      if (k < 1) raf = requestAnimationFrame(tick); else from.current = target
+    }
+    raf = requestAnimationFrame(tick)
+    return () => { cancelAnimationFrame(raf); from.current = target }
+  }, [target, ms])
+  return v
+}
+
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: ReactNode }) {
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div className="min-w-0">
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
         {subtitle && <p className="text-sm text-sub">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -42,10 +61,10 @@ export function ErrorBanner({ message, onRetry }: { message: string; onRetry?: (
 }
 
 export function ProgressBar({ pct, tone = 'primary', label }: { pct: number; tone?: 'primary' | 'warn' | 'expense' | 'income'; label: string }) {
-  const color = { primary: 'bg-primary', warn: 'bg-warn', expense: 'bg-expense', income: 'bg-income' }[tone]
+  const color = { primary: 'bg-gradient-to-r from-primary to-violet', warn: 'bg-warn', expense: 'bg-expense', income: 'bg-income' }[tone]
   const v = Math.max(0, Math.min(100, pct))
   return (
-    <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v)} className="h-2 w-full overflow-hidden rounded-full bg-muted">
+    <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v)} className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
       <div className={cx('h-full rounded-full transition-[width] duration-500', color)} style={{ width: `${v}%` }} />
     </div>
   )

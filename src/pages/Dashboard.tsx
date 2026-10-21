@@ -3,19 +3,34 @@ import { Link } from 'react-router-dom'
 import { ArrowDownLeft, ArrowUpRight, CalendarClock, PiggyBank, Plus, Scale, TrendingUp, Wallet } from 'lucide-react'
 import { useData } from '../data/DataContext'
 import { useActions } from '../components/Layout'
-import { Badge, EmptyState, Field, PageHeader, ProgressBar, cx } from '../components/ui'
+import { Badge, EmptyState, Field, PageHeader, ProgressBar, cx, useCountUp } from '../components/ui'
 import DateFilter, { type PresetValue } from '../components/DateFilter'
 import { CategoryDonut, TrendChart, monthLong, type Slice } from '../components/Charts'
 import { addDays, addMonths, monthEnd, monthStart, presetRange } from '../lib/dates'
 import { budgetProgress, monthlyTrend, periodTotals, spendingByCategory, totalBalance } from '../lib/finance'
 import { formatPct } from '../lib/money'
 
-function Stat({ label, value, icon, tone, sub }: { label: string; value: string; icon: React.ReactNode; tone?: 'income' | 'expense'; sub?: string }) {
+type Tone = 'income' | 'expense'
+const TILE = { income: 'bg-income/15 text-income', expense: 'bg-expense/15 text-expense', none: 'bg-primary/12 text-primary' }
+
+function Stat({ label, amount, format, value, icon, tone, sub }: { label: string; amount?: number; format?: (n: number) => string; value?: string; icon: React.ReactNode; tone?: Tone; sub?: string }) {
+  const shown = useCountUp(amount ?? 0)
   return (
-    <div className="card fade-up p-4">
-      <div className="flex items-center justify-between text-sm text-sub"><span>{label}</span><span aria-hidden="true">{icon}</span></div>
-      <p className={cx('tabular mt-2 truncate text-2xl font-semibold', tone === 'income' && 'text-income', tone === 'expense' && 'text-expense')}>{value}</p>
+    <div className="card card-hover p-4">
+      <div className="flex items-center justify-between text-sm font-medium text-sub"><span>{label}</span><span className={cx('icon-tile', TILE[tone ?? 'none'])} aria-hidden="true">{icon}</span></div>
+      <p className={cx('tabular mt-3 truncate text-2xl font-extrabold tracking-tight', tone === 'income' && 'text-income', tone === 'expense' && 'text-expense')}>{amount !== undefined && format ? format(shown) : value}</p>
       {sub && <p className="mt-1 text-xs text-sub">{sub}</p>}
+    </div>
+  )
+}
+
+function Hero({ amount, format, sub }: { amount: number; format: (n: number) => string; sub: string }) {
+  const shown = useCountUp(amount, 900)
+  return (
+    <div className="hero lg:col-span-2">
+      <div className="relative flex items-center gap-2 text-sm font-semibold text-white/85"><Scale className="h-4 w-4" aria-hidden="true" /> Total balance</div>
+      <p className="tabular relative mt-3 truncate text-4xl font-extrabold tracking-tight sm:text-5xl" aria-label={format(amount)}>{format(shown)}</p>
+      <p className="relative mt-2 text-sm text-white/80">{sub}</p>
     </div>
   )
 }
@@ -79,33 +94,33 @@ export default function Dashboard() {
       </div>
 
       {dueBills.length > 0 && (
-        <Link to="/recurring" className="mb-4 flex items-center gap-3 rounded-lg border border-warn/40 bg-warn/10 p-3 text-sm">
+        <Link to="/recurring" className="mb-4 flex items-center gap-3 rounded-2xl border border-warn/40 bg-warn/10 p-3.5 text-sm">
           <CalendarClock className="h-5 w-5 shrink-0 text-warn" aria-hidden="true" />
           <span className="flex-1"><strong>{dueBills.length} bill{dueBills.length > 1 ? 's' : ''}</strong> due soon or overdue: {dueBills.slice(0, 3).map((b) => b.description).join(', ')}</span>
           <span className="font-semibold text-primary">Review</span>
         </Link>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <Stat label="Total balance" value={fmt(balance)} icon={<Scale className="h-4 w-4" />} sub={acc === 'all' ? 'All active accounts' : accountName(acc)} />
-        <Stat label="Income" value={fmt(totals.income)} icon={<ArrowDownLeft className="h-4 w-4 text-income" />} tone="income" />
-        <Stat label="Expenses" value={fmt(totals.expenses)} icon={<ArrowUpRight className="h-4 w-4 text-expense" />} tone="expense" sub={totals.refunds ? `After ${fmt(totals.refunds)} refunds` : undefined} />
-        <Stat label="Net cash flow" value={fmt(totals.net, { sign: true })} icon={<TrendingUp className="h-4 w-4" />} tone={totals.net >= 0 ? 'income' : 'expense'} />
+      <div className="stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Hero amount={balance} format={fmt} sub={acc === 'all' ? 'All active accounts' : accountName(acc)} />
+        <Stat label="Income" amount={totals.income} format={fmt} icon={<ArrowDownLeft className="h-4 w-4" />} tone="income" />
+        <Stat label="Expenses" amount={totals.expenses} format={fmt} icon={<ArrowUpRight className="h-4 w-4" />} tone="expense" sub={totals.refunds ? `After ${fmt(totals.refunds)} refunds` : undefined} />
+        <Stat label="Net cash flow" amount={totals.net} format={(n) => fmt(n, { sign: true })} icon={<TrendingUp className="h-4 w-4" />} tone={totals.net >= 0 ? 'income' : 'expense'} />
         <Stat label="Savings rate" value={formatPct(totals.savingsRateBps)} icon={<Wallet className="h-4 w-4" />} sub={totals.savingsRateBps === null ? 'Needs income in this period' : undefined} />
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-5">
-        <section className="card p-4 lg:col-span-3" aria-labelledby="h-trend">
-          <h2 id="h-trend" className="mb-3 font-semibold">Monthly trend</h2>
+      <div className="stagger mt-4 grid gap-4 lg:grid-cols-5">
+        <section className="card p-5 lg:col-span-3" aria-labelledby="h-trend">
+          <h2 id="h-trend" className="mb-3 font-bold">Monthly trend</h2>
           <TrendChart rows={trend} />
         </section>
-        <section className="card p-4 lg:col-span-2" aria-labelledby="h-cat">
-          <h2 id="h-cat" className="mb-3 font-semibold">Spending by category</h2>
+        <section className="card p-5 lg:col-span-2" aria-labelledby="h-cat">
+          <h2 id="h-cat" className="mb-3 font-bold">Spending by category</h2>
           {slices.length ? <CategoryDonut slices={slices} /> : <p className="py-10 text-center text-sm text-sub">No spending in this period.</p>}
         </section>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="stagger mt-4 grid gap-4 lg:grid-cols-2">
         <section className="card p-4" aria-labelledby="h-bud">
           <div className="mb-3 flex items-center justify-between"><h2 id="h-bud" className="font-semibold">Budgets · {monthLong(budgetMonth)}</h2><Link to="/budgets" className="text-sm font-semibold text-primary">Manage</Link></div>
           {monthBudgets.length === 0 ? <p className="py-6 text-center text-sm text-sub">No budgets for this month yet.</p> : (

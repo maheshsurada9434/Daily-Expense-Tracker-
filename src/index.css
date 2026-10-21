@@ -3,49 +3,68 @@
 @tailwind utilities;
 
 :root {
-  --bg: 248 250 252; --card: 255 255 255; --muted: 238 242 247; --border: 226 232 240;
-  --fg: 2 6 23; --sub: 71 85 105;
-  --primary: 30 58 138; --on-primary: 255 255 255; --accent: 161 98 7;
-  --income: 4 120 87; --expense: 185 28 28; --warn: 180 83 9;
+  --bg: 244 246 255; --card: 255 255 255; --muted: 238 240 252; --border: 226 230 245;
+  --fg: 15 18 40; --sub: 90 98 128;
+  --primary: 79 70 229; --on-primary: 255 255 255; --accent: 217 119 6; --violet: 124 58 237;
+  --income: 4 120 87; --expense: 220 38 38; --warn: 180 83 9;
 }
 .dark {
-  --bg: 8 12 24; --card: 15 23 42; --muted: 30 41 59; --border: 51 65 85;
-  --fg: 241 245 249; --sub: 148 163 184;
-  --primary: 129 160 255; --on-primary: 8 12 24; --accent: 234 179 8;
+  --bg: 9 11 26; --card: 20 24 48; --muted: 30 35 66; --border: 44 50 88;
+  --fg: 238 241 255; --sub: 156 165 200;
+  --primary: 129 140 248; --on-primary: 10 12 30; --accent: 251 191 36; --violet: 167 139 250;
   --income: 52 211 153; --expense: 248 113 113; --warn: 251 191 36;
 }
 
 @layer base {
   html { color-scheme: light; -webkit-text-size-adjust: 100%; }
   html.dark { color-scheme: dark; }
-  body { @apply bg-bg text-fg font-sans antialiased; font-size: 16px; line-height: 1.5; }
+  body { @apply bg-bg text-fg font-sans antialiased; font-size: 16px; line-height: 1.5; min-height: 100vh;
+    background-image: radial-gradient(60rem 36rem at 90% -10%, rgb(var(--violet) / 0.16), transparent 60%), radial-gradient(48rem 30rem at -10% 0%, rgb(var(--primary) / 0.14), transparent 60%);
+    background-attachment: fixed; }
   /* 16px inputs stop iOS from zooming on focus */
   input, select, textarea { font-size: 16px; }
   :focus-visible { outline: 2px solid rgb(var(--primary)); outline-offset: 2px; border-radius: 6px; }
   button, [role='button'], a, select, summary { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
   dialog { color: inherit; }
-  dialog::backdrop { background: rgb(2 6 23 / 0.55); backdrop-filter: blur(2px); }
+  dialog::backdrop { background: rgb(8 10 30 / 0.55); backdrop-filter: blur(6px); }
+  dialog[open] { animation: pop 220ms cubic-bezier(.2,.9,.3,1.2) both; }
 }
 
 @layer components {
   .tabular { font-variant-numeric: tabular-nums; }
-  .card { @apply rounded-xl border border-border bg-card shadow-card; }
-  .input { @apply min-h-[44px] w-full rounded-lg border border-border bg-card px-3 text-fg placeholder:text-sub/70 transition-colors; }
-  .input:focus { border-color: rgb(var(--primary)); }
+  .card { @apply rounded-2xl border border-border/70 bg-card/80 shadow-card backdrop-blur-md transition-[transform,box-shadow] duration-300; }
+  .card-hover:hover { transform: translateY(-3px); box-shadow: 0 14px 34px -14px rgb(var(--primary) / 0.35); }
+  .input { @apply min-h-[44px] w-full rounded-xl border border-border bg-card px-3.5 text-fg placeholder:text-sub/70 transition-[border-color,box-shadow] duration-200; }
+  .input:focus { border-color: rgb(var(--primary)); box-shadow: 0 0 0 4px rgb(var(--primary) / 0.15); outline: none; }
   .input[aria-invalid='true'] { border-color: rgb(var(--expense)); }
-  .btn { @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition-colors duration-200 disabled:opacity-50; }
-  .btn-primary { @apply bg-primary text-on-primary hover:opacity-90; }
-  .btn-ghost { @apply border border-border bg-card text-fg hover:bg-muted; }
+  .btn { @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-all duration-200 active:scale-[0.97] disabled:opacity-50; }
+  .btn-primary { color: #fff; background-image: linear-gradient(135deg, rgb(79 70 229), rgb(124 58 237)); box-shadow: 0 8px 20px -8px rgb(79 70 229 / 0.7); }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 12px 24px -8px rgb(79 70 229 / 0.8); }
+  .btn-ghost { @apply border border-border bg-card/70 text-fg hover:bg-muted; }
   .btn-danger { @apply bg-expense text-white hover:opacity-90; }
-  .icon-btn { @apply inline-flex h-11 w-11 items-center justify-center rounded-lg text-sub transition-colors duration-200 hover:bg-muted hover:text-fg; }
+  .icon-btn { @apply inline-flex h-11 w-11 items-center justify-center rounded-xl text-sub transition-colors duration-200 hover:bg-muted hover:text-fg; }
+  .hero { position: relative; overflow: hidden; color: #fff; border-radius: 1.25rem; padding: 1.25rem;
+    background-image: linear-gradient(135deg, #4338ca 0%, #6d28d9 55%, #9333ea 100%); box-shadow: 0 20px 40px -18px rgb(79 70 229 / 0.65); }
+  .hero::before, .hero::after { content: ''; position: absolute; border-radius: 9999px; background: rgb(255 255 255 / 0.12); pointer-events: none; }
+  .hero::before { width: 14rem; height: 14rem; right: -4rem; top: -6rem; animation: float 9s ease-in-out infinite; }
+  .hero::after { width: 9rem; height: 9rem; right: 4rem; bottom: -5rem; animation: float 11s ease-in-out infinite reverse; }
+  .icon-tile { @apply flex h-9 w-9 items-center justify-center rounded-xl; }
 }
 
-@keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.fade-up { animation: fade-up 220ms ease-out both; }
+@keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-14px, 12px); } }
+@keyframes pop { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
+.stagger > * { animation: fade-up 480ms cubic-bezier(.2,.8,.2,1) both; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; } .stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; } .stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(n+6) { animation-delay: 300ms; }
+.page-in { animation: fade-up 380ms cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fade-up 320ms cubic-bezier(.2,.8,.2,1) both; }
 @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 .skeleton { background: linear-gradient(90deg, rgb(var(--muted)) 25%, rgb(var(--border)) 50%, rgb(var(--muted)) 75%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; border-radius: 8px; }
-@media (prefers-reduced-motion: reduce) { .fade-up, .skeleton { animation: none; } * { transition-duration: 0.01ms !important; } }
+@media (prefers-reduced-motion: reduce) { .fade-up, .skeleton, .stagger > *, .page-in, .hero::before, .hero::after, dialog[open] { animation: none !important; } .card-hover:hover, .btn:hover { transform: none !important; } * { transition-duration: 0.01ms !important; } }
 
 @media print {
   aside, nav, header, .no-print { display: none !important; }
