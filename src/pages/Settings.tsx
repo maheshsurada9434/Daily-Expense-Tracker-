@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { z } from 'zod'
-import { Download, LogOut, ShieldAlert } from 'lucide-react'
+import { Copy, Download, LogOut, ShieldAlert, Smartphone } from 'lucide-react'
 import { useData } from '../data/DataContext'
 import { api } from '../data/api'
 import { supabase } from '../lib/supabase'
@@ -21,6 +21,7 @@ export default function Settings() {
   const { prefs, profile, session, transactions, accountName, category, today, reload } = useData()
   const { busy, run } = useAction()
   const toast = useToast()
+  const quickUrl = location.href.split('#')[0] + '#/quick'
   const confirm = useConfirm()
   const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<z.infer<typeof settingsSchema>>({ resolver: zodResolver(settingsSchema) })
   useEffect(() => { reset({ displayName: profile.displayName, currency: prefs.currency, timezone: prefs.timezone, theme: prefs.theme, fyStartMonth: String(prefs.fyStartMonth) }, { keepFieldsRef: true }) }, [prefs, profile, reset])
@@ -57,6 +58,19 @@ export default function Settings() {
           </div>
           <button className="btn btn-primary" disabled={busy || !isDirty}>{busy ? 'Saving…' : 'Save settings'}</button>
         </form>
+
+        <section className="card space-y-3 p-4" aria-labelledby="s-tap">
+          <h2 id="s-tap" className="flex items-center gap-2 font-semibold"><Smartphone className="h-4 w-4" aria-hidden="true" /> Quick add with iPhone Back Tap</h2>
+          <ol className="list-decimal space-y-1 pl-5 text-sm text-sub">
+            <li>Copy the quick-add link below.</li>
+            <li>In the <strong className="text-fg">Shortcuts</strong> app, tap <strong className="text-fg">+</strong>, add the <strong className="text-fg">Open URLs</strong> action, paste the link and name it “Quick expense”.</li>
+            <li>Go to Settings → Accessibility → Touch → <strong className="text-fg">Back Tap</strong> → Double Tap and pick “Quick expense”.</li>
+          </ol>
+          <p className="text-sm text-sub">It opens in Safari, so stay signed in there.</p>
+          <button className="btn btn-ghost" onClick={async () => {
+            try { await navigator.clipboard.writeText(quickUrl); toast.ok('Quick-add link copied') } catch { toast.info(quickUrl) }
+          }}><Copy className="h-4 w-4" aria-hidden="true" /> Copy quick-add link</button>
+        </section>
 
         <section className="card space-y-3 p-4" aria-labelledby="s-data">
           <h2 id="s-data" className="font-semibold">Your data</h2>

@@ -15,6 +15,7 @@ const Goals = lazy(() => import('./pages/Goals'))
 const Recurring = lazy(() => import('./pages/Recurring'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Settings = lazy(() => import('./pages/Settings'))
+const QuickAdd = lazy(() => import('./pages/QuickAdd'))
 
 function ThemeSync() {
   const { prefs } = useData()
@@ -40,6 +41,10 @@ function Authed({ session }: { session: Session }) {
   return (
     <DataProvider session={session}>
       <ThemeSync />
+      <Routes>
+        {/* Full screen, no sidebar: the iPhone Back Tap shortcut opens #/quick */}
+        <Route path="/quick" element={<Suspense fallback={null}><QuickAdd /></Suspense>} />
+        <Route path="*" element={
       <Layout>
         <Suspense fallback={<PageFallback />}>
           <Routes>
@@ -55,6 +60,8 @@ function Authed({ session }: { session: Session }) {
           </Routes>
         </Suspense>
       </Layout>
+        } />
+      </Routes>
     </DataProvider>
   )
 }

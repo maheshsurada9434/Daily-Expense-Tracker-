@@ -19,6 +19,16 @@ A personal finance tracker: income, expenses, transfers, budgets, savings goals,
 
 Indian digit grouping (₹12,34,567.89) is used for INR. Other supported currencies use thousands grouping.
 
+## Quick add from iPhone Back Tap
+
+`#/quick` is a full-screen, three-step entry: note, amount, category. Tapping a category saves the expense dated today, to the account and payment method of your last expense. To open it with a double tap on the back of an iPhone:
+
+1. In the app, **Settings → Quick add with iPhone Back Tap → Copy quick-add link** (it is `https://<your-pages-url>/#/quick`).
+2. In the **Shortcuts** app, tap **+**, add **Open URLs**, paste the link, and name the shortcut "Quick expense".
+3. iPhone **Settings → Accessibility → Touch → Back Tap → Double Tap → Quick expense**.
+
+The shortcut opens Safari, so stay signed in to the app in Safari (a Home Screen copy of the app keeps its own separate sign-in).
+
 ## Financial rules
 
 All money is stored as **integer minor units** (paise/cents) in `BIGINT`. No floating point is used for totals. (JPY is shown with 2 decimals for consistency.)

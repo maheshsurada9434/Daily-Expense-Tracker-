@@ -84,6 +84,24 @@ test('add a transaction and see it listed', async ({ page }) => {
   await expect(page.getByText('Transaction added')).toBeVisible()
 })
 
+test('quick add saves note, amount and category in three steps', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 })
+  let posted: Row | null = null
+  page.on('request', (r) => { if (r.method() === 'POST' && r.url().includes('/rest/v1/transactions')) posted = JSON.parse(r.postData() ?? '{}') })
+  await signedIn(page)
+  await page.goto('/#/quick')
+  await expect(page.getByRole('heading', { name: 'What did you spend on?' })).toBeVisible()
+  await page.getByLabel('Note').fill('Chai')
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('heading', { name: 'How much was it?' })).toBeVisible()
+  await page.getByLabel('Amount').fill('abc40')
+  await expect(page.getByLabel('Amount')).toHaveValue('40')
+  await page.getByRole('button', { name: 'Next' }).click()
+  await page.getByRole('button', { name: 'Food & Dining' }).click()
+  await expect(page.getByText('Saved under Food & Dining')).toBeVisible()
+  expect(posted).toMatchObject({ type: 'expense', amount: 4000, description: 'Chai', category_id: 'c1', account_id: 'a1', txn_date: today })
+})
+
 test('rejects an invalid amount before saving', async ({ page }) => {
   await signedIn(page)
   await page.getByRole('button', { name: /add transaction/i }).first().click()
