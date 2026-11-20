@@ -22,8 +22,20 @@ function makeDb() {
     { id: 'c1', name: 'Food & Dining', kind: 'expense', color: '#ef4444', archived: false },
     { id: 'c2', name: 'Salary', kind: 'income', color: '#16a34a', archived: false },
   ]
+  const D = (d: number) => new Date(Date.now() - d * 864e5).toISOString().slice(0, 10)
+  if (process.env.RICH) {
+    accounts.push({ id: 'a3', name: 'SBI', kind: 'bank', opening_balance: 2500000, archived: false, created_at: '2026-01-03' }, { id: 'a4', name: 'Card', kind: 'card', opening_balance: 0, archived: false, created_at: '2026-01-04' })
+    ;['Groceries', 'Transport', 'Shopping', 'Bills', 'Health', 'Rent', 'Fuel', 'Mobile'].forEach((n, i) => categories.push({ id: `e${i}`, name: n, kind: 'expense', color: '#3b82f6', archived: false }))
+  }
+  const rich: Row[] = process.env.RICH ? Array.from({ length: 42 }, (_, i) => ({
+    id: `t${i}`, type: i % 15 === 0 ? 'income' : 'expense', amount: 1000 + i * 731, txn_date: D(i), account_id: ['a1', 'a2', 'a3', 'a4'][i % 4],
+    category_id: i % 15 === 0 ? 'c2' : i % 3 ? `e${i % 8}` : 'c1', payment_method: i % 5 ? 'upi' : 'other', description: i % 2 ? `Item ${i}` : '', tags: i % 2 ? ['x'] : [],
+    recurring_rule_id: i === 7 ? 'r2' : null, recurring_date: i === 7 ? D(i) : null, import_hash: null, created_at: new Date(Date.now() - i * 864e5).toISOString(),
+  })) : []
   const tables: Record<string, Row[]> = {
-    accounts, categories, transactions: [], transfers: [], budgets: [], savings_goals: [], goal_contributions: [], recurring_rules: [],
+    accounts, categories, transactions: rich, transfers: [], budgets: [], savings_goals: [], goal_contributions: [], recurring_rules: process.env.RICH ? [
+      { id: 'r1', type: 'income', amount: 3900000, account_id: 'a2', category_id: 'c2', payment_method: 'other', description: 'Salary', frequency: 'monthly', start_date: D(30), end_date: D(29), next_date: D(-10), is_bill: false, remind_days: 3, active: false },
+      { id: 'r2', type: 'expense', amount: 2000000, account_id: 'a2', category_id: 'c1', payment_method: 'other', description: 'Rent', frequency: 'monthly', start_date: D(10), end_date: '2028-11-10', next_date: D(-20), is_bill: false, remind_days: 3, active: true }] : [],
     user_preferences: [{ user_id: USER.id, currency: 'INR', timezone: 'Asia/Kolkata', theme: 'light', fy_start_month: 4 }],
     profiles: [{ id: USER.id, display_name: 'Test' }],
   }
@@ -135,4 +147,30 @@ test('every main page renders without errors', async ({ page }) => {
   }
   expect(errors).toEqual([])
   expect(today).toMatch(/\d{4}-\d{2}-\d{2}/)
+})
+
+test('diag', async ({ page }) => {
+  test.skip(!process.env.RICH)
+  const errs: string[] = []
+  page.on('pageerror', (e) => errs.push('PAGEERROR ' + e.message + ' @ ' + (e.stack ?? '').split('\n').slice(0, 4).join(' | ')))
+  page.on('console', (m) => { if (m.type() === 'error') errs.push('CONSOLE ' + m.text()) })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await signedIn(page)
+  await page.waitForTimeout(2500)
+  await page.screenshot({ path: 'shots/1-root.png' })
+  await page.goto('/#/quick')
+  await page.getByLabel('Note').fill('Chai')
+  await page.keyboard.press('Enter')
+  await page.getByLabel('Amount').fill('100')
+  await page.getByRole('button', { name: 'Next' }).click()
+  await page.getByRole('button', { name: 'Food & Dining' }).click()
+  await page.getByText('Saved under').waitFor()
+  await page.getByRole('link', { name: 'Open dashboard' }).click()
+  await page.waitForTimeout(2500)
+  await page.screenshot({ path: 'shots/2-after-quick.png' })
+  await page.reload()
+  await page.waitForTimeout(2500)
+  await page.screenshot({ path: 'shots/3-reload.png' })
+  const h = await page.getByRole('heading', { name: 'Dashboard' }).count()
+  console.log('::error title=diag::headings=' + h + ' errors=' + JSON.stringify(errs).slice(0, 3000))
 })

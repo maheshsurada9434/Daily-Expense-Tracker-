@@ -1,0 +1,28 @@
+name: preview-shots
+on:
+  push:
+    branches: [preview-quick]
+permissions:
+  contents: write
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: https://sajrlqjybpsriygphnqb.supabase.co
+      VITE_SUPABASE_ANON_KEY: sb_publishable_nfiYn2TGhfLd9lv4z8TL-g_gtW7AWmA
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - run: scripts/ci-step.sh typecheck npm run typecheck
+      - run: scripts/ci-step.sh lint npm run lint
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: RICH=1 npx playwright test -g diag --reporter=line
+        continue-on-error: true
+      - run: |
+          mkdir -p /tmp/s && cp -r shots /tmp/s/ || true
+          git config user.name ci && git config user.email ci@example.com
+          git checkout --orphan preview-shots && git rm -rfq --cached . && git clean -fdq -e node_modules
+          cp -r /tmp/s/shots . && git add shots && git commit -qm shots && git push -fq origin preview-shots
