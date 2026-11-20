@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import type { Session } from '@supabase/supabase-js'
 import { isConfigured, supabase } from './lib/supabase'
@@ -33,6 +33,22 @@ function ThemeSync() {
   return null
 }
 
+/** Shows what failed instead of a blank screen, with a way out. */
+class Boundary extends Component<{ children: ReactNode }, { err: Error | null }> {
+  state = { err: null as Error | null }
+  static getDerivedStateFromError(err: Error) { return { err } }
+  render() {
+    if (!this.state.err) return this.props.children
+    return (
+      <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-3 p-6 text-center">
+        <h1 className="text-2xl font-extrabold">This screen didn’t load</h1>
+        <p className="break-words text-sm text-sub">{this.state.err.message}</p>
+        <button className="btn btn-primary mx-auto rounded-full" onClick={() => { location.hash = '#/'; location.reload() }}>Reload the app</button>
+      </main>
+    )
+  }
+}
+
 function PageFallback() {
   return <div className="space-y-4"><Skeleton className="h-8 w-48" /><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>
 }
@@ -41,6 +57,7 @@ function Authed({ session }: { session: Session }) {
   return (
     <DataProvider session={session}>
       <ThemeSync />
+      <Boundary>
       <Routes>
         {/* Full screen, no sidebar: the iPhone Back Tap shortcut opens #/quick */}
         <Route path="/quick" element={<Suspense fallback={null}><QuickAdd /></Suspense>} />
@@ -62,6 +79,7 @@ function Authed({ session }: { session: Session }) {
       </Layout>
         } />
       </Routes>
+      </Boundary>
     </DataProvider>
   )
 }

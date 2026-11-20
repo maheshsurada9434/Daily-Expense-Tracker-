@@ -1,5 +1,6 @@
 // Full-screen quick add: note → amount → category → saved. Opened from iPhone Back Tap via a Shortcut that opens #/quick.
 import { useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowRight, Check, X } from 'lucide-react'
 import { useData } from '../data/DataContext'
 import { api } from '../data/api'
@@ -33,7 +34,7 @@ function Saved({ amount, label, onAgain }: { amount: number; label: string; onAg
       <p className="mt-2 text-sub" role="status">Saved under {label}</p>
       <div className="mt-10 flex w-full max-w-xs flex-col gap-3">
         <button className="btn btn-primary h-14 rounded-full text-base" onClick={onAgain} autoFocus>Add another</button>
-        <a className="btn btn-ghost h-14 rounded-full text-base" href="#/">Open dashboard</a>
+        <Link className="btn btn-ghost h-14 rounded-full text-base" to="/">Open dashboard</Link>
       </div>
     </div>
   )
@@ -90,7 +91,7 @@ export default function QuickAdd() {
   return (
     <main className="mx-auto flex h-[100vh] h-[100dvh] max-w-xl flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between">
-        <a href="#/" className="icon-btn glass" aria-label="Close quick add"><X className="h-5 w-5" aria-hidden="true" /></a>
+        <Link to="/" className="icon-btn glass" aria-label="Close quick add"><X className="h-5 w-5" aria-hidden="true" /></Link>
         {!saved && (
           <ol className="flex items-center gap-2" aria-label={`Step ${step + 1} of 3`}>
             {QUESTIONS.map((_, i) => (
@@ -107,7 +108,7 @@ export default function QuickAdd() {
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
           <p className="text-lg font-bold">Add an account first</p>
           <p className="text-sub">Quick add saves to your most recently used account.</p>
-          <a className="btn btn-primary rounded-full" href="#/accounts">Add an account</a>
+          <Link className="btn btn-primary rounded-full" to="/accounts">Add an account</Link>
         </div>
       ) : saved ? (
         <Saved amount={saved.amount} label={saved.label} onAgain={again} />
