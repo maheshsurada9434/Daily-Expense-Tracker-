@@ -12,7 +12,7 @@ const QUESTIONS = ['What did you spend on?', 'How much was it?', 'Which category
 /** Per-word blur-in heading (a CSS port of React Bits' BlurText). Re-keyed per step so it replays. */
 function BlurWords({ text }: { text: string }) {
   return (
-    <h1 aria-label={text} className="text-[clamp(2.25rem,9vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.035em]">
+    <h1 aria-label={text} className="text-[clamp(2.25rem,9vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.035em] [text-wrap:balance]">
       {text.split(' ').map((w, i) => (
         <span key={i} aria-hidden="true" className="blur-word inline-block" style={{ animationDelay: `${i * 90}ms` }}>{w}&nbsp;</span>
       ))}
@@ -119,7 +119,7 @@ export default function QuickAdd() {
             <label htmlFor="qa-note" className="sr-only">Note</label>
             <input id="qa-note" ref={noteRef} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} autoFocus enterKeyHint="next" autoComplete="off" tabIndex={step === 0 ? 0 : -1}
               placeholder="Lunch with Riya" className="mt-8 w-full border-0 border-b-2 border-fg/15 bg-transparent pb-3 text-2xl font-semibold outline-none transition-colors placeholder:text-sub/50 focus:border-primary" />
-            <button className="btn btn-primary mt-auto h-14 rounded-full text-base" type="submit">{note.trim() ? 'Next' : 'Skip note'}<ArrowRight className="h-5 w-5" aria-hidden="true" /></button>
+            <button className="btn btn-primary mt-10 h-14 rounded-full text-base" type="submit">{note.trim() ? 'Next' : 'Skip note'}<ArrowRight className="h-5 w-5" aria-hidden="true" /></button>
           </form>
 
           {/* 2. Amount */}
@@ -133,7 +133,7 @@ export default function QuickAdd() {
                 placeholder="0" aria-invalid={!!err} className="tabular w-full min-w-0 border-0 bg-transparent text-[clamp(3.5rem,16vw,6rem)] font-extrabold leading-none tracking-[-0.04em] outline-none placeholder:text-fg/20" />
             </div>
             <p className="mt-3 min-h-[1.5rem] text-sm text-expense" role="alert">{step === 1 ? err : ''}</p>
-            <div className="mt-auto flex gap-3">
+            <div className="mt-6 flex gap-3">
               <button type="button" className="btn btn-ghost h-14 rounded-full px-6" onClick={back}>Back</button>
               <button className="btn btn-primary h-14 flex-1 rounded-full text-base" type="submit">Next<ArrowRight className="h-5 w-5" aria-hidden="true" /></button>
             </div>
@@ -148,7 +148,7 @@ export default function QuickAdd() {
                 <div className="grid grid-cols-2 gap-3">
                   {cats.map((c, i) => (
                     <button key={c.id} type="button" disabled={!!busy || step !== 2} tabIndex={step === 2 ? 0 : -1} onClick={() => save(c.id, c.name)}
-                      className={cx('glass chip-in flex min-h-[64px] items-center gap-3 rounded-2xl px-4 text-left font-semibold transition-transform duration-200 active:scale-[0.96]', busy === c.id && 'ring-2 ring-primary')}
+                      className={cx('glass-strong chip-in flex min-h-[64px] items-center gap-3 rounded-2xl px-4 text-left font-semibold transition-transform duration-200 active:scale-[0.96]', busy === c.id && 'ring-2 ring-primary')}
                       style={{ animationDelay: step === 2 ? `${120 + i * 35}ms` : '0ms' }}>
                       <span className="h-3.5 w-3.5 shrink-0 rounded-full" style={{ background: c.color }} aria-hidden="true" />
                       <span className="min-w-0 truncate">{c.name}</span>
@@ -156,7 +156,7 @@ export default function QuickAdd() {
                     </button>
                   ))}
                   <button type="button" disabled={!!busy || step !== 2} tabIndex={step === 2 ? 0 : -1} onClick={() => save('', 'Uncategorised')}
-                    className="chip-in flex min-h-[64px] items-center rounded-2xl border border-dashed border-fg/20 px-4 text-left font-semibold text-sub" style={{ animationDelay: step === 2 ? `${120 + cats.length * 35}ms` : '0ms' }}>
+                    className="chip-in flex min-h-[64px] items-center rounded-2xl border border-dashed border-fg/25 bg-card/40 px-4 text-left font-semibold text-sub" style={{ animationDelay: step === 2 ? `${120 + cats.length * 35}ms` : '0ms' }}>
                     No category
                   </button>
                 </div>
